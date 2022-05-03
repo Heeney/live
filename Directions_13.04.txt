@@ -1,0 +1,488 @@
+So first 
+
+Create our App with the Boot Appended 
+
+We will create an initial CRUD scaffold for Posts 
+
+Then configure the setup for design 
+
+Then work with the rails console = rails c 
+
+
+rails g controller pages home
+
+root pages#home
+
+views pages home
+
+
+
+complete the Boot Config 
+Move Javascript folder 
+Add code to manifest.js 
+Manifest.js 
+//= link_tree ../images
+//= link_tree ../builds
+//= link_directory ../javascripts .js
+
+
+______________ Creating our App with bootstrap attributes 
+
+rails new tutApp3 -c bootstrap
+rake db:create
+rails s 
+http://localhost:3000/
+
+views / application.html / one stylefile instead of many static
+
+review of files 
+Gemfile 
+migrate
+consider using gitHub
+
+_____________________________ Creating our Scaffold 
+
+rails g scaffold Post title:string image:string description:text 
+migration file 
+Routes 
+Test
+
+Database > Migrate 
+
+class CreatePosts < ActiveRecord::Migration[7.0]
+  def change
+    create_table :posts do |t|
+      t.string :title
+      t.string :image
+      t.text :description
+
+      t.timestamps
+
+Create Post is a class taken from Active Record 
+Creating a table aka posts
+|t| is an iterative variable / t table by default
+Blocks
+
+rake db:migrate
+updating the schema file
+schema.rb
+
+ActiveRecord::Schema[7.0].define(version: 2022_04_05_153456) do
+  create_table "posts", force: :cascade do |t|
+    t.string "title"
+    t.string "image"
+    t.text "description"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+You can now create the above entries 
+  _______________________________________________________________
+
+
+Rails Console > after we have created our scaffold 
+
+rails c 
+
+Post.all
+
+Foo.all > uninitialized constant 
+
+Post.create!(title: "My Cool Post", image: "foo.jpg", description: "asdf")
+
+// you should see the below : 
+
+<Post:0x00000267e80458b0
+ id: 1,
+ title: "My Cool Post",
+ image: "foo.jpg",
+ description: "asdf",
+ created_at: Tue, 05 Apr 2022 15:42:07.940305000 UTC +00:00,
+ updated_at: Tue, 05 Apr 2022 15:42:07.940305000 UTC +00:00>
+irb(main):004:0>
+
+Taking in parameters above 
+
+
+Post.all
+Post.count
+
+Assign Variables: 
+p = Post.last
+p
+p.title
+p.image 
+p.update(title: "my updated post")
+Post.last < should see updated post
+
+
+_______ Entering Blank Values
+
+Post.create()
+<Post:0x00000267e8872150
+ id: 2,
+ title: nil,
+ image: nil,
+ description: nil,
+ created_at: Tue, 05 Apr 2022 15:46:39.841018000 UTC +00:00,
+ updated_at: Tue, 05 Apr 2022 15:46:39.841018000 UTC +00:00>
+
+All Values being Nil 
+
+this is not a good thing. 
+
+Need to add validations
+
+Post.last.delete
+Post.all.county
+Should be back to 1 post
+Post.last.delete
+Post.all.count
+Should now have zero posts.
+exit
+
+Edit / Query / Delete Items
+
+
+_____________________________________integrating Validation for Data integrity
+
+
+App > models > post.rb
+
+class Post < ApplicationRecord
+end
+
+validates_presence_of :title, :image, :description
+
+
+rails c
+
+Post.create!()
+
+You should now see : 
+
+:/Ruby30-x64/lib/ruby/gems/3.0.0/gems/activerecord-7.0.2.3/lib/active_record/validations.rb:80:in `raise_validation_error': Validation failed: Title can't be blank, Image can't be blank, Description can't be blank (ActiveRecord::RecordInvalid)
+
+Post.create!(title: "testing title", image: "testing.jpg", description: "asdf")
+
+Not all of the validations are required.
+
+We can remove the description
+
+reload! 
+
+Exiting from the console will do the same thing.
+
+exit
+
+_________________________________________________________Setting up the Homepage
+
+
+
+rails s
+
+http://localhost:3000/ 
+
+still going to the landing page
+
+routes.rb
+
+
+Rails.application.routes.draw do
+  resources :posts
+
+  ****Adding the below to specify the root. 
+  root to: "posts#index"
+
+  **** "call to the controller"#"method call"
+  Posts_controller.rb
+  the scaffold built alot of stuff for us in Posts_controller.rb
+  Check the index method 
+  We are calling the index method in routes.rb above.
+  Calling the INDEX method on POSTS
+
+
+  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
+
+  # Defines the root path route ("/")
+  # root "articles#index"
+end
+
+You may get a permission error, just restart the server 
+
+
+____________________________________________________________________________
+
+Implementing BootStrap for Design and usability 
+
+In development.rb 
+ config.assets.check_precompiled_asset = false
+
+In manifest.js 
+//= link_tree ../images
+//= link_tree ../builds
+//= link_directory ../javascripts .js
+
+You must ensure that the builds folder is created upon creation of the app. 
+
+At times you may need to restart the server 
+
+
+
+
+Sample Header / Should be added in application.html.erb to provide some structure.
+___ Use this for Tuesday Example
+
+    <h1 class="visually-hidden">Headers examples</h1>
+
+  <div class="container">
+    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+      <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+        <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
+        <span class="fs-4">Blog Post </span>
+      </a>
+
+      <ul class="nav nav-pills">
+        <li class="nav-item"><a href="/" class="nav-link active" aria-current="page">Home</a></li>
+        <li class="nav-item"><a href="posts/new" class="nav-link">New Post</a></li>
+        <li class="nav-item"><a href="posts" class="nav-link">POSTS</a></li>
+        <li class="nav-item"><a href="#" class="nav-link">FAQs</a></li>
+        <li class="nav-item"><a href="about" class="nav-link " aria-current="about">Come Find Us</a></li>
+      </ul>
+    </header>
+  </div>
+
+
+
+
+___________________________Additional Sample below 
+
+ <h1 class="visually-hidden">Headers examples</h1>
+
+  <div class="container">
+    <header class="d-flex flex-wrap justify-content-center py-3 mb-4 border-bottom">
+      <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-dark text-decoration-none">
+        <svg class="bi me-2" width="40" height="32"><use xlink:href="#bootstrap"/></svg>
+        <span class="fs-4">Simple header</span>
+      </a>
+
+      <ul class="nav nav-pills">
+        <li class="nav-item"><a href="/" class="nav-link active" aria-current="page">Home</a></li>
+        <li class="nav-item"><a href="#" class="nav-link">Features</a></li>
+        <li class="nav-item"><a href="#" class="nav-link">Pricing</a></li>
+        <li class="nav-item"><a href="#" class="nav-link">FAQs</a></li>
+        <li class="nav-item"><a href="about" class="nav-link " aria-current="about">ABOUT</a></li>
+      </ul>
+    </header>
+  </div>
+
+
+  ________________________________________________________
+
+  Creating additional Pages 
+
+  "Come Find Us "
+
+  Create a route
+
+     Go to config > routes.rb file
+    In the Rails.application.routes.draw method, enter a route using the syntax: [request type] "[URL]", to: "[controller]#[action]"
+
+
+get "about", to: "about#about"
+
+
+Create a controller 
+ Go to app > controllers folder
+    Create a file named [route]_controller.rb, e.g. about_controller.rb
+    Create a class named [Route]Controller and inherit from ApplicationController
+    Define a method named [action from routes.rb], e.g. index
+
+about_controller.rb
+
+class AboutController < ApplicationController
+  def about
+  end
+end
+
+Create a view
+
+   Go to app > views folder
+    Create a folder named [route]
+    In that folder create a file named [action.html.erb]
+    Add HTML (and ERB)
+
+Create about folder 
+create file in the new folder about.html.erb
+
+
+
+
+________________________________________________________
+
+Adding Map to About : 
+
+
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.14.1/css/ol.css" type="text/css">
+    <style>
+      .map {
+        height: 600px;
+        width: 100%;
+      }
+    </style>
+    <script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.14.1/build/ol.js"></script>
+    <title>OpenLayers example</title>
+  </head>
+  <body>
+    <h2>My Map</h2>
+    <div id="map" class="map"></div>
+    <script type="text/javascript">
+      var map = new ol.Map({
+        target: 'map',
+        layers: [
+          new ol.layer.Tile({
+            source: new ol.source.OSM()
+          })
+        ],
+        view: new ol.View({
+          center: ol.proj.fromLonLat([37.41, 8.82]),
+          zoom: 4
+        })
+      });
+    </script>
+  </body>
+</html>
+
+
+
+________________________________________________________ Adding Carosel to Home 
+
+
+
+13.04 CAD UPDATE - INTEGRATING PHOTO / FILE UPLOADS TO OUR APPLICATION / LOCAL & Potential Cloud Storage 
+
+_______________________________________________________________________________Useful Gems for uploading files both Local and Cloud 
+CarrierWave 
+File Uploads - One of the popular gems for file uploads in Rails
+https://github.com/carrierwaveuploader/carrierwave 
+
+Fog
+Connecting to Cloud Storage API 
+https://github.com/fog/fog-google
+- Storage Service for hosting images which will show once deployed to Heroku 
+- AWS or GCP can be used to store your images - Possibly S3 if Free
+
+MiniMagick
+https://github.com/minimagick/minimagick
+Handling file sizes - Dynamic Image file re-sizing
+
+
+Cloud Deployment 
+https://signup.heroku.com/
+Sign Up for Free Heroku Account for Deployment of your RubyOnRails App
+
+Heroku CLI - Command Line interface setup - Windows and Other OS's
+https://devcenter.heroku.com/articles/getting-started-with-ruby#set-up
+
+
+Ensure you have a GitHub Account 
+https://github.com/
+
+Preparing your application for Heroku Deployment 
+https://devcenter.heroku.com/articles/preparing-a-codebase-for-heroku-deployment 
+
+
+_________________________________________________________________________________Photo Uploads
+
+
+Add gems
+bundle install
+
+Need to install imagemakic
+https://imagemagick.org/script/download.php#windows
+
+rails g uploader Photo
+app / uploaders / photo_uploader.rb
+
+
+Pasting our own photo_uploader.rb
+ - CarrierWave:MiniMagick - Resizing
+ - Sprockets - Asset Pipeline - Class Availibility
+ - Change the Storage :fog :file  (Cloud Storage)
+ - Diff Versions of File after uploads - File Sizing
+ - Extension WhiteList
+ - %w / irb [array]
+
+Add the photo Upload to our model 
+  - models / post.rb
+
+
+  class Post < ApplicationRecord
+  validates_presence_of :title, :image, :description
+
+  mount_uploader :image, PhotoUploader (Looking for the photo_uploader CLASS)
+  # check out the schema.db , we had provided image as string. t.string "image"
+end
+
+
+More on the above config in documentation : https://github.com/carrierwaveuploader/carrierwave
+
+
+Figaro install 
+(Storing your cloud keys securly config/application.yml when installed)
+
+Modify the View 
+
+Views / Posts / _form_html.erb
+
+
+
+
+
+gem install carrierwave
+gem 'carrierwave', '~> 2.0'
+Bundle install 
+
+
+  #Gems for Image Management 
+  gem 'carrierwave'
+  gem 'mini_magick'
+  #gem 'fog' 
+  gem 'figaro'
+  gem 'unf' <- this is a wrapper for compatibility
+
+  Fog Gem is now Google Specific
+
+
+Bundle Install - should bundle without issue
+
+rails g uploader Photo
+
+A new Directory will be created in the App Director / Uploader
+New File also created - photo_uploader.rb 
+
+class PhotoUploader > CarrierWave::Uploader::Base
+
+
+Documentation here : https://github.com/carrierwaveuploader/carrierwave
+
+
+  def store_dir
+  "stoageFolder"
+  end
+
+  def extension_white_list
+    %w(jpg what ever type of file you want)
+    end
+
+    %w convert or enforce to string
+
+
+    irb - arrays 
+
+
+Can find uploads in App / Public / Uploads 
